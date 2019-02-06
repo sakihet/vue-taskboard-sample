@@ -52,53 +52,40 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'TaskBoard',
   data () {
     return {
       newTaskName: '',
       newTaskAssigneeId: null,
-      newTaskPoint: 0,
-      members: [
-        { id: 1, name: '🐱' },
-        { id: 2, name: '🐶' },
-        { id: 3, name: '🐹'}
-      ],
-      statuses: [
-        { id: 1, name: 'Open' },
-        { id: 2, name: 'Doing' },
-        { id: 3, name: 'Closed' }
-      ],
-      tasks: [
-        { id: 1, name: 'task 1', statusId: 1, assigneeId: 1, point: 3 },
-        { id: 2, name: 'task 2', statusId: 1, assigneeId: 2, point: 2 },
-        { id: 3, name: 'task 3', statusId: 2, assigneeId: 1, point: 1 },
-        { id: 4, name: 'task 4', statusId: 3, assigneeId: 3, point: 1 }
-      ],
+      newTaskPoint: 0
+
     }
+  },
+  computed: {
+    ...mapGetters([
+      'members',
+      'statuses',
+      'tasks'
+    ])
   },
   methods: {
     incrementTaskStatus: function (task) {
-      if (1 <= task.statusId && task.statusId <= 2) {
-        task.statusId++
-      }
+      this.$store.dispatch('incrementTaskStatus', task)
     },
     decrementTaskStatus: function (task) {
-      if (2 <= task.statusId && task.statusId <= 3) {
-        task.statusId--
-      }
+      this.$store.dispatch('decrementTaskStatus', task)
     },
     addTask: function () {
-      let newId = this.tasks[this.tasks.length - 1].id + 1
-      this.tasks.push(
-        {
-          id: newId,
-          name: this.newTaskName,
-          statusId: 1,
-          assigneeId: this.newTaskAssigneeId,
-          mandays: this.newTaskMandays
-        }
-      ),
+      let params = {
+        name: this.newTaskName,
+        statusId: 1,
+        assigneeId: this.newTaskAssigneeId,
+        point: this.newTaskPoint
+      }
+      this.$store.dispatch('addTask', params)
       this.newTaskName = ''
       this.newTaskAssigneeId = null
       this.newTaskPoint = 0
