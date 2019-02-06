@@ -18,6 +18,29 @@
       >
       <button @click="addTask">Add</button>
     </div>
+    <div>
+      <p>Statuses</p>
+      <span
+        v-for="status in statuses"
+        :key="status.id"
+      >{{ status.name }}
+        <button
+          v-if="status.deletable"
+          @click="deleteStatus(status.id)"
+        >x</button>
+        <button
+          v-if="status.deletable && statuses[statuses.findIndex(x => x.id === status.id) + 1].deletable"
+          @click="swapStatus(status)"
+        >⇔</button>
+        <input
+          type="text"
+          size="8"
+          v-if="status.id !== statuses[statuses.length-1].id"
+          v-model="newStatusNames[status.id]"
+          @keyup.enter="addStatus(status.id)"
+        >
+      </span>
+    </div>
     <div class="grid">
       <div
         v-for="status in statuses"
@@ -60,8 +83,8 @@ export default {
     return {
       newTaskName: '',
       newTaskAssigneeId: null,
-      newTaskPoint: 0
-
+      newTaskPoint: 0,
+      newStatusNames: []
     }
   },
   computed: {
@@ -89,6 +112,22 @@ export default {
       this.newTaskName = ''
       this.newTaskAssigneeId = null
       this.newTaskPoint = 0
+    },
+    addStatus: function (statusId) {
+      if (this.newStatusNames.length !== 0) {
+        let params = {
+          previousStatusId: statusId,
+          statusName: this.newStatusNames[statusId]
+        }
+        this.$store.dispatch('addStatus', params)
+        this.newStatusNames = []
+      }
+    },
+    deleteStatus: function (statusId) {
+      this.$store.dispatch('deleteStatus', statusId)
+    },
+    swapStatus: function (status) {
+      this.$store.dispatch('swapStatus', status)
     }
   }
 }

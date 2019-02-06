@@ -11,9 +11,9 @@ export default new Vuex.Store({
       { id: 3, name: '🐹' }
     ],
     statuses: [
-      { id: 1, name: 'Open' },
-      { id: 2, name: 'Doing' },
-      { id: 3, name: 'Closed' }
+      { id: 1, name: 'Open', deletable: false },
+      { id: 2, name: 'Doing', deletable: true },
+      { id: 3, name: 'Closed', deletable: false }
     ],
     tasks: [
       { id: 1, name: 'task 1', statusId: 1, assigneeId: 1, point: 3 },
@@ -33,6 +33,16 @@ export default new Vuex.Store({
     },
     addTask (state, payload) {
       state.tasks.push(payload.task)
+    },
+    addStatus (state, payload) {
+      state.statuses.splice(payload.index + 1, 0, payload.status)
+    },
+    deleteStatus (state, payload) {
+      state.statuses.splice(payload.index, 1)
+    },
+    swapStatus (state, payload) {
+      let index = state.statuses.findIndex(x => x.id === payload.status.id)
+      state.statuses.splice(index, 2, state.statuses[index+1], payload.status)
     }
   },
   actions: {
@@ -54,6 +64,27 @@ export default new Vuex.Store({
       let newId = state.tasks[state.tasks.length - 1].id + 1
       let task = Object.assign(params, { id: newId })
       commit('addTask', { task: task })
+    },
+    addStatus ({ commit, state }, params) {
+      let max = Math.max(...this.state.statuses.map(x => x.id))
+      let status = {
+        id: max + 1,
+        name: params.statusName,
+        deletable: true
+      }
+      let index = state.statuses.findIndex(x => x.id === params.previousStatusId)
+      commit('addStatus', { index: index, status: status })
+    },
+    deleteStatus ({ commit, state }, statusId) {
+      if (0 < state.tasks.filter(x => x.statusId === statusId).length) {
+        alert('tasks exist')
+      } else {
+        let index = state.statuses.findIndex(x => x.id === statusId)
+        commit('deleteStatus', { index: index })
+      }
+    },
+    swapStatus ({ commit, state }, status) {
+      commit('swapStatus', { status: status })
     }
   }
 })
