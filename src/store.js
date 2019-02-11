@@ -83,7 +83,7 @@ export default new Vuex.Store({
         commit('deleteStatus', { index: index })
       }
     },
-    swapStatus ({ commit, state }, status) {
+    swapStatus ({ commit }, status) {
       commit('swapStatus', { status: status })
     }
   }

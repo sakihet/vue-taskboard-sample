@@ -15,13 +15,14 @@
       <input
         type="number"
         v-model.number="newTaskPoint"
+        min="0"
       >
       <button @click="addTask">Add</button>
     </div>
     <div>
-      <p>Statuses</p>
+      <p>Statuses:</p>
       <span
-        v-for="status in statuses"
+        v-for="(status, index) in statuses"
         :key="status.id"
       >{{ status.name }}
         <button
@@ -29,18 +30,19 @@
           @click="deleteStatus(status.id)"
         >x</button>
         <button
-          v-if="status.deletable && statuses[statuses.findIndex(x => x.id === status.id) + 1].deletable"
+          v-if="status.deletable && statuses[index + 1].deletable"
           @click="swapStatus(status)"
         >⇔</button>
         <input
           type="text"
           size="8"
-          v-if="status.id !== statuses[statuses.length-1].id"
+          v-if="status.id !== statuses[statuses.length - 1].id"
           v-model="newStatusNames[status.id]"
           @keyup.enter="addStatus(status.id)"
         >
       </span>
     </div>
+    <p>Tasks:</p>
     <div class="grid">
       <div
         v-for="status in statuses"
@@ -151,8 +153,5 @@ export default {
 .taskCardCell {
   flex: 1;
   text-align: center;
-}
-.statuses {
-  border: 1px solid;
 }
 </style>
