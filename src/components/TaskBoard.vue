@@ -15,7 +15,7 @@
       <input
         type="number"
         v-model.number="newTaskPoint"
-        min="0"
+        min="1"
       >
       <button @click="addTask">Add</button>
     </div>
@@ -84,8 +84,8 @@ export default {
   data () {
     return {
       newTaskName: '',
-      newTaskAssigneeId: null,
-      newTaskPoint: 0,
+      newTaskAssigneeId: 1,
+      newTaskPoint: 1,
       newStatusNames: []
     }
   },
@@ -112,8 +112,7 @@ export default {
       }
       this.$store.dispatch('addTask', params)
       this.newTaskName = ''
-      this.newTaskAssigneeId = null
-      this.newTaskPoint = 0
+      this.newTaskPoint = 1
     },
     addStatus: function (statusId) {
       if (this.newStatusNames.length !== 0) {
